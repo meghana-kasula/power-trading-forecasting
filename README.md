@@ -10,7 +10,7 @@ Built with Python, Flask, Pandas, Scikit-learn, and XGBoost.
 
 The system is designed around a simple forecasting pipeline that processes historical power market data, generates forecasting features, trains an XGBoost model, and serves predictions through a web dashboard.
 
-![Architecture](docs/architecture.png)
+<img src="docs/architecture.png" width="600">
 
 To run locally:
 
