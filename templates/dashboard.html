@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Power Price Forecasting Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">PP</div>
+                <div>
+                    <p class="eyebrow">Portfolio Dashboard</p>
+                    <h1>Power Price Forecasting</h1>
+                </div>
+            </div>
+
+            <form class="upload-card" method="post" enctype="multipart/form-data">
+                <label for="file">Upload forecast CSV</label>
+                <input id="file" name="file" type="file" accept=".csv">
+                <button type="submit">Run Forecast</button>
+                <p class="hint">
+                    Expected format: 192 rows of 15-minute data with columns matching the sample CSV.
+                    The app uses the latest 96-step recursive forecast.
+                </p>
+            </form>
+
+            <div class="schema-card">
+                <h2>CSV Columns</h2>
+                <ul>
+                    {% for column in required_columns %}
+                    <li>{{ column }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </aside>
+
+        <main class="content">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="alert">{{ messages[0] }}</div>
+                {% endif %}
+            {% endwith %}
+
+            <section class="topbar">
+                <div>
+                    <p class="eyebrow">Day-ahead MCP intelligence</p>
+                    <h2>Interactive Forecast Dashboard</h2>
+                    <p class="subtitle">
+                        {% if using_sample %}
+                        Showing the bundled sample forecast and actual MCP comparison.
+                        {% else %}
+                        Showing forecast for {{ uploaded_name }} with bundled actual MCP comparison.
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="status-pill">96 intervals | 15 min</div>
+            </section>
+
+            <section class="cards-grid">
+                <article class="metric-card">
+                    <span>Latest Predicted MCP</span>
+                    <strong>{{ "%.2f"|format(result.summary.latest) }}</strong>
+                    <small>Final forecast interval</small>
+                </article>
+                <article class="metric-card">
+                    <span>Average Predicted MCP</span>
+                    <strong>{{ "%.2f"|format(result.summary.average) }}</strong>
+                    <small>Across 96 intervals</small>
+                </article>
+                <article class="metric-card">
+                    <span>Peak Forecast</span>
+                    <strong>{{ "%.2f"|format(result.summary.maximum) }}</strong>
+                    <small>{{ result.summary.peak_time }}</small>
+                </article>
+                <article class="metric-card">
+                    <span>Lowest Forecast</span>
+                    <strong>{{ "%.2f"|format(result.summary.minimum) }}</strong>
+                    <small>{{ result.summary.low_time }}</small>
+                </article>
+            </section>
+
+            <section class="cards-grid compact">
+                <article class="metric-card accent">
+                    <span>RMSE</span>
+                    <strong>{{ "%.2f"|format(result.metrics.rmse) if result.metrics.rmse is not none else "N/A" }}</strong>
+                    <small>Root mean squared error</small>
+                </article>
+                <article class="metric-card accent">
+                    <span>MAE</span>
+                    <strong>{{ "%.2f"|format(result.metrics.mae) if result.metrics.mae is not none else "N/A" }}</strong>
+                    <small>Mean absolute error</small>
+                </article>
+                <article class="metric-card accent">
+                    <span>MAPE</span>
+                    <strong>{{ "%.2f%%"|format(result.metrics.mape) if result.metrics.mape is not none else "N/A" }}</strong>
+                    <small>Mean absolute percentage error</small>
+                </article>
+            </section>
+
+            <section class="graph-panel">
+                {{ result.comparison_graph|safe }}
+            </section>
+
+            <section class="graph-panel">
+                {{ result.forecast_graph|safe }}
+            </section>
+
+            <section class="table-panel">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">Forecast detail</p>
+                        <h2>Predicted and Actual MCP Table</h2>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Step</th>
+                                <th>Timestamp</th>
+                                <th>Predicted MCP</th>
+                                <th>Actual MCP</th>
+                                <th>Error</th>
+                                <th>Absolute Error</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in result.table %}
+                            <tr>
+                                <td>{{ row.Step }}</td>
+                                <td>{{ row.Timestamp }}</td>
+                                <td>{{ row["Predicted MCP"] }}</td>
+                                <td>{{ row["Actual MCP"] }}</td>
+                                <td>{{ row.Error }}</td>
+                                <td>{{ row["Absolute Error"] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
