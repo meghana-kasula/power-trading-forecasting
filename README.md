@@ -12,6 +12,14 @@ The system is designed around a simple forecasting pipeline that processes histo
 
 <img src="docs/architecture.png" width="600">
 
+<h2>Screenshots</h2>
+
+<h3>Dashboard</h3>
+<img src="screenshots/dashboard.png" width="800">
+
+<h3>Forecast Results</h3>
+<img src="screenshots/forecast-results.png" width="800">
+
 To run locally:
 
 pip install -r requirements.txt
