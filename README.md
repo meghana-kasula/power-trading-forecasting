@@ -6,6 +6,18 @@ I built it to explore how machine learning can be applied to power markets and p
 
 Built with Python, Flask, Pandas, Scikit-learn, and XGBoost.
 
+## Architecture
+
+The system is designed around a simple forecasting pipeline that processes historical power market data, generates forecasting features, trains an XGBoost model, and serves predictions through a web dashboard.
+
+<img src="docs/architecture.png" width="600">
+
+## Screenshots
+
+![Dashboard](screenshots/dashboard.png)
+
+![Forecast Results](screenshots/forecast-results.png)
+
 To run locally:
 
 pip install -r requirements.txt
