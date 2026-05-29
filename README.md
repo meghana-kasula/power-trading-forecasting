@@ -12,9 +12,11 @@ The system is designed around a simple forecasting pipeline that processes histo
 
 <img src="docs/architecture.png" width="600">
 
-<h2>Screenshots</h2>
+## Screenshots
 
-<img src="screenshots/dashboard.png" width="800">
+![Dashboard](screenshots/dashboard.png)
+
+![Forecast Results](screenshots/forecast-results.png)
 
 To run locally:
 
